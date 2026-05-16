@@ -116,7 +116,7 @@ ABSOLUTE: 100% loving, zero judgment, zero pressure.`,
           parts: [{ text: roleConfig.system }]
         },
         generationConfig: {
-          maxOutputTokens: 1000,
+          maxOutputTokens: 2000,
           temperature: 0.7
         }
       }),
