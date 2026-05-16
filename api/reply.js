@@ -1,8 +1,7 @@
-// api/reply.js — Vercel Serverless Function
-// API Key 安全地存在 Vercel 后台环境变量中，前端完全看不到
+// api/reply.js — Vercel Serverless Function (Gemini 免费版)
 
 export default async function handler(req, res) {
-  // ── CORS 设置（允许你自己的域名，上线后可改为具体域名）──
+  // CORS 设置
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -15,14 +14,13 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  // ── 从请求体取参数 ──
   const { userAge, trouble, selectedRole } = req.body;
 
   if (!userAge || !trouble || !selectedRole) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
-  // ── 5 个视家的 System Prompt（全英文，避免 header 编码问题）──
+  // 5 个视角的 System Prompt
   const rolePrompts = {
     child: {
       label: "小孩 (8-12岁)",
@@ -96,4 +94,45 @@ ABSOLUTE: 100% loving, zero judgment, zero pressure.`,
     return res.status(400).json({ error: "Invalid role" });
   }
 
-  const userMessage = `T
+  const userMessage = `The person writing to you is ${userAge} years old. ` +
+    `Here is what they want to share (in Chinese): ${trouble}\n\n` +
+    `Please reply warmly in Chinese, in the voice of your character.`;
+
+  // ── 调用 Google Gemini API ──
+  try {
+    const apiKey = process.env.ANTHROPIC_API_KEY; 
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+
+    const geminiRes = await fetch(geminiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{ text: userMessage }]
+        }],
+        systemInstruction: {
+          parts: [{ text: roleConfig.system }]
+        },
+        generationConfig: {
+          maxOutputTokens: 1000,
+          temperature: 0.7
+        }
+      }),
+    });
+
+    if (!geminiRes.ok) {
+      const errData = await geminiRes.json().catch(() => ({}));
+      console.error("Gemini API error:", errData);
+      return res.status(502).json({ error: "AI service error" });
+    }
+
+    const data = await geminiRes.json();
+    const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+    return res.status(200).json({ reply: replyText, roleLabel: roleConfig.label });
+  } catch (err) {
+    console.error("Server error:", err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+}
