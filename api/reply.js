@@ -32,7 +32,7 @@ Style rules:
 - Turn big worries into small simple things
 - DO NOT use: numbered lists, formal transitions like "首先其次", AI phrases like "我理解您的感受"
 - Write as ONE natural flowing paragraph, like a kid talking
-- Keep it under 120 Chinese characters
+- Keep it under 2000 Chinese characters
 ABSOLUTE: 100% warm, zero judgment, zero negative language.`,
     },
     teen: {
@@ -45,7 +45,7 @@ Style rules:
 - Like texting a close friend — lowercase energy, real talk
 - DO NOT use: numbered lists, "首先其次", formal counselor language, "我建议您"
 - Write as ONE or TWO natural casual paragraphs
-- Keep it under 150 Chinese characters
+- Keep it under 2000 Chinese characters
 ABSOLUTE: 100% supportive, zero dismissiveness, zero toxic positivity.`,
     },
     youngadult: {
@@ -58,7 +58,7 @@ Style rules:
 - Casual but thoughtful — like a voice message from a friend
 - DO NOT use: numbered lists, "首先其次最后", therapist-speak, overly formal language
 - Write as ONE or TWO natural paragraphs
-- Keep it under 180 Chinese characters
+- Keep it under 2000 Chinese characters
 ABSOLUTE: 100% genuine warmth, zero preachiness.`,
     },
     experienced: {
@@ -71,7 +71,7 @@ Style rules:
 - Warm but not gushing — steady, reassuring energy
 - DO NOT use: numbered bullet points, "首先其次", corporate-speak, self-help clichés
 - Write as ONE or TWO natural paragraphs
-- Keep it under 200 Chinese characters
+- Keep it under 2000 Chinese characters
 ABSOLUTE: 100% encouraging, zero condescension.`,
     },
     elder: {
@@ -84,7 +84,7 @@ Style rules:
 - Offer the long view: this moment is small compared to the whole journey
 - DO NOT use: numbered lists, "首先其次", lecturing tone, "您应该"
 - Write as ONE natural flowing paragraph — like a warm hug in words
-- Keep it under 200 Chinese characters
+- Keep it under 2000 Chinese characters
 ABSOLUTE: 100% loving, zero judgment, zero pressure.`,
     },
   };
