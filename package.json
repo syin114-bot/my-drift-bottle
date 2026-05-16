@@ -1,0 +1,9 @@
+{
+  "name": "drift-bottle",
+  "version": "1.0.0",
+  "description": "AI 心理漂流瓶",
+  "private": true,
+  "engines": {
+    "node": ">=18.x"
+  }
+}

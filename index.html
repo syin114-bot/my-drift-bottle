@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>倾诉 · 匿名心理漂流瓶</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════════
+   TOKENS & RESET
+═══════════════════════════════════════════ */
+:root {
+  --ink:        #1a1a2e;
+  --ink-soft:   #2d2d4e;
+  --mist:       #f0ede8;
+  --mist-warm:  #faf7f2;
+  --sand:       #e8ddd0;
+  --sand-dark:  #c9b99a;
+  --teal:       #4a9b8e;
+  --teal-light: #6db8aa;
+  --teal-glow:  rgba(74,155,142,0.15);
+  --amber:      #d4956a;
+  --amber-soft: rgba(212,149,106,0.12);
+  --text-main:  #2c2c3e;
+  --text-soft:  #7a7a95;
+  --text-dim:   #ababc0;
+  --white:      #ffffff;
+  --shadow-sm:  0 2px 12px rgba(26,26,46,0.06);
+  --shadow-md:  0 8px 32px rgba(26,26,46,0.10);
+  --shadow-lg:  0 20px 60px rgba(26,26,46,0.15);
+  --radius-sm:  10px;
+  --radius-md:  18px;
+  --radius-lg:  28px;
+  --radius-xl:  40px;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Noto Serif SC', serif;
+  background: var(--mist);
+  color: var(--text-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+  /* 纸张纹理 */
+  background-image:
+    radial-gradient(ellipse at 10% 0%, rgba(212,149,106,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 90% 100%, rgba(74,155,142,0.06) 0%, transparent 50%);
+}
+
+/* ═══════════════════════════════════════════
+   BACKGROUND DECORATION
+═══════════════════════════════════════════ */
+.bg-circles {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+}
+.bg-circles span {
+  position: absolute; border-radius: 50%;
+  background: radial-gradient(circle, rgba(74,155,142,0.06), transparent 70%);
+  animation: floatCircle 20s ease-in-out infinite;
+}
+.bg-circles span:nth-child(1) { width: 600px; height: 600px; top: -200px; left: -150px; animation-delay: 0s; }
+.bg-circles span:nth-child(2) { width: 400px; height: 400px; bottom: -100px; right: -100px; animation-delay: -7s; background: radial-gradient(circle, rgba(212,149,106,0.06), transparent 70%); }
+.bg-circles span:nth-child(3) { width: 300px; height: 300px; top: 40%; left: 60%; animation-delay: -14s; }
+
+@keyframes floatCircle {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(30px, -20px) scale(1.05); }
+  66%       { transform: translate(-20px, 30px) scale(0.95); }
+}
+
+/* ═══════════════════════════════════════════
+   LAYOUT
+═══════════════════════════════════════════ */
+.app {
+  position: relative; z-index: 1;
+  min-height: 100vh;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 0 20px 80px;
+}
+
+/* ═══════════════════════════════════════════
+   HERO SECTION
+═══════════════════════════════════════════ */
+.hero {
+  width: 100%; max-width: 500px;
+  padding: 72px 0 48px;
+  text-align: center;
+  animation: heroReveal 0.9s cubic-bezier(0.22,1,0.36,1) both;
+}
+@keyframes heroReveal {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.hero-eyebrow {
+  font-size: 11px; letter-spacing: 5px; font-weight: 400;
+  color: var(--teal); text-transform: uppercase;
+  margin-bottom: 20px; opacity: 0.8;
+}
+
+.hero-title {
+  font-family: 'ZCOOL QingKe HuangYou', cursive;
+  font-size: clamp(68px, 15vw, 100px);
+  color: var(--ink);
+  line-height: 1;
+  letter-spacing: -2px;
+  margin-bottom: 18px;
+  position: relative;
+}
+.hero-title::after {
+  content: '';
+  position: absolute;
+  bottom: -6px; left: 50%; transform: translateX(-50%);
+  width: 40px; height: 3px;
+  background: linear-gradient(90deg, var(--teal), var(--amber));
+  border-radius: 2px;
+}
+
+.hero-subtitle {
+  font-size: 16px; font-weight: 300;
+  color: var(--text-soft);
+  letter-spacing: 3px;
+  margin-top: 20px; margin-bottom: 40px;
+}
+.hero-subtitle .age-highlight {
+  color: var(--teal); font-weight: 500;
+  transition: color 0.3s;
+}
+
+/* 引导卡片 */
+.guide-cards {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  margin-bottom: 40px; text-align: left;
+}
+.guide-card {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(201,185,154,0.2);
+  font-size: 13px; color: var(--text-soft); line-height: 1.5;
+  display: flex; align-items: flex-start; gap: 10px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.guide-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.guide-card .icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.guide-card .text { font-size: 12.5px; color: var(--text-soft); }
+
+/* 主 CTA */
+.btn-start {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 18px 40px;
+  background: linear-gradient(135deg, var(--ink) 0%, var(--ink-soft) 100%);
+  color: var(--white);
+  border: none; border-radius: var(--radius-xl);
+  font-family: 'Noto Serif SC', serif;
+  font-size: 17px; font-weight: 400; letter-spacing: 2px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(26,26,46,0.25), 0 2px 6px rgba(26,26,46,0.15);
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  position: relative; overflow: hidden;
+}
+.btn-start::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(74,155,142,0.2), transparent);
+  opacity: 0; transition: opacity 0.3s;
+}
+.btn-start:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 14px 36px rgba(26,26,46,0.3); }
+.btn-start:hover::before { opacity: 1; }
+.btn-start:active { transform: translateY(0) scale(0.99); }
+
+/* ═══════════════════════════════════════════
+   INPUT PANEL (展开面板)
+═══════════════════════════════════════════ */
+.input-panel {
+  width: 100%; max-width: 560px;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.7s cubic-bezier(0.22,1,0.36,1), opacity 0.5s ease;
+}
+.input-panel.open {
+  max-height: 900px;
+  opacity: 1;
+}
+
+.panel-inner {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 36px 32px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid rgba(201,185,154,0.25);
+  margin-top: 20px;
+}
+
+/* 年龄输入 */
+.age-section {
+  margin-bottom: 28px;
+}
+.field-label {
+  font-size: 11px; letter-spacing: 3px; color: var(--teal);
+  text-transform: uppercase; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.field-label::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, rgba(74,155,142,0.3), transparent);
+}
+
+.age-input-row { display: flex; align-items: center; gap: 12px; }
+.age-input-row span { font-size: 15px; color: var(--text-soft); font-weight: 300; }
+input[type="number"] {
+  width: 80px; padding: 10px 14px;
+  background: var(--mist-warm);
+  border: 1.5px solid var(--sand);
+  border-radius: var(--radius-sm);
+  font-family: 'Noto Serif SC', serif;
+  font-size: 18px; color: var(--text-main);
+  text-align: center; outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+input[type="number"]:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(74,155,142,0.12);
+}
+input[type="number"]::-webkit-inner-spin-button { opacity: 0; }
+
+/* 烦恼文本框 */
+.trouble-section { margin-bottom: 28px; }
+textarea {
+  width: 100%; min-height: 120px;
+  padding: 16px 18px;
+  background: var(--mist-warm);
+  border: 1.5px solid var(--sand);
+  border-radius: var(--radius-md);
+  font-family: 'Noto Serif SC', serif;
+  font-size: 15px; color: var(--text-main); line-height: 1.8;
+  resize: none; outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+textarea::placeholder { color: var(--text-dim); font-weight: 300; }
+textarea:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(74,155,142,0.1);
+}
+
+/* 字数 */
+.char-count {
+  text-align: right; font-size: 12px; color: var(--text-dim);
+  margin-top: 6px; transition: color 0.2s;
+}
+.char-count.warn { color: var(--amber); }
+
+/* ── 5个视角选项 ── */
+.role-section { margin-bottom: 32px; }
+.role-grid {
+  display: flex; flex-direction: column; gap: 8px;
+}
+.role-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 18px;
+  background: var(--mist-warm);
+  border: 1.5px solid var(--sand);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+.role-item:hover {
+  border-color: var(--teal-light);
+  background: var(--teal-glow);
+}
+.role-item.selected {
+  border-color: var(--teal);
+  background: var(--teal-glow);
+  box-shadow: 0 0 0 1px var(--teal);
+}
+.role-item input[type="radio"] { position: absolute; opacity: 0; }
+.role-dot {
+  width: 18px; height: 18px; flex-shrink: 0;
+  border-radius: 50%;
+  border: 2px solid var(--sand-dark);
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.role-item.selected .role-dot {
+  border-color: var(--teal);
+  background: var(--teal);
+}
+.role-item.selected .role-dot::after {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%; background: white;
+}
+.role-info { flex: 1; }
+.role-name {
+  font-size: 14px; font-weight: 500; color: var(--text-main);
+  letter-spacing: 0.5px;
+}
+.role-age {
+  font-size: 12px; color: var(--text-dim); margin-top: 2px;
+}
+.role-item.selected .role-name { color: var(--teal); }
+.role-emoji-right { font-size: 20px; flex-shrink: 0; opacity: 0.7; }
+
+/* 发送按钮 */
+.btn-send {
+  width: 100%; padding: 17px;
+  background: linear-gradient(135deg, var(--teal) 0%, #3a8a7d 100%);
+  border: none; border-radius: var(--radius-md);
+  color: white;
+  font-family: 'Noto Serif SC', serif;
+  font-size: 17px; font-weight: 400; letter-spacing: 3px;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(74,155,142,0.35);
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-send:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(74,155,142,0.45); }
+.btn-send:active { transform: translateY(0); }
+.btn-send:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* ═══════════════════════════════════════════
+   LOADING OVERLAY
+═══════════════════════════════════════════ */
+.loading-overlay {
+  display: none; position: fixed; inset: 0; z-index: 200;
+  background: rgba(240,237,232,0.92);
+  backdrop-filter: blur(12px);
+  flex-direction: column; align-items: center; justify-content: center; gap: 24px;
+}
+.loading-overlay.active { display: flex; }
+
+.loading-bottle {
+  font-size: 56px;
+  animation: sailAway 4s ease-in-out infinite;
+}
+@keyframes sailAway {
+  0%   { transform: rotate(-8deg) translateY(0); }
+  20%  { transform: rotate(6deg) translateY(-12px) translateX(15px); }
+  40%  { transform: rotate(-4deg) translateY(4px) translateX(-10px); }
+  60%  { transform: rotate(8deg) translateY(-8px) translateX(20px); }
+  80%  { transform: rotate(-6deg) translateY(6px) translateX(-5px); }
+  100% { transform: rotate(-8deg) translateY(0); }
+}
+
+.loading-ripple {
+  display: flex; gap: 8px; align-items: center;
+}
+.loading-ripple span {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--teal); opacity: 0.3;
+  animation: rippleWave 1.4s ease-in-out infinite;
+}
+.loading-ripple span:nth-child(2) { animation-delay: 0.2s; }
+.loading-ripple span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes rippleWave {
+  0%, 100% { transform: translateY(0); opacity: 0.3; }
+  50%       { transform: translateY(-8px); opacity: 1; }
+}
+
+.loading-text {
+  font-size: 15px; color: var(--text-soft);
+  letter-spacing: 2px; font-weight: 300;
+  animation: textPulse 2s ease-in-out infinite;
+}
+@keyframes textPulse {
+  0%, 100% { opacity: 0.5; }
+  50%       { opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════
+   REPLY LETTER CARD
+═══════════════════════════════════════════ */
+.reply-section {
+  width: 100%; max-width: 560px;
+  display: none;
+  animation: letterAppear 0.9s cubic-bezier(0.22,1,0.36,1) both;
+}
+.reply-section.show { display: block; }
+
+@keyframes letterAppear {
+  0%   { opacity: 0; transform: translateY(30px) scale(0.96); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.letter-card {
+  background: linear-gradient(160deg, #fefcf7 0%, #faf6ed 60%, #f5efe0 100%);
+  border-radius: var(--radius-lg);
+  padding: 48px 44px 44px;
+  position: relative;
+  box-shadow: var(--shadow-lg), 0 2px 0 rgba(201,185,154,0.4) inset;
+  border: 1px solid rgba(201,185,154,0.3);
+  overflow: hidden;
+}
+
+/* 信纸横线 */
+.letter-card::before {
+  content: '';
+  position: absolute; left: 44px; right: 44px; top: 90px; bottom: 44px;
+  background-image: repeating-linear-gradient(
+    transparent, transparent 33px,
+    rgba(201,185,154,0.2) 33px, rgba(201,185,154,0.2) 34px
+  );
+  pointer-events: none; z-index: 0;
+}
+/* 信纸左侧装饰线 */
+.letter-card::after {
+  content: '';
+  position: absolute; left: 72px; top: 40px; bottom: 40px;
+  width: 1px; background: rgba(212,149,106,0.18);
+  pointer-events: none;
+}
+
+.letter-header {
+  position: relative; z-index: 1;
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px dashed rgba(201,185,154,0.4);
+}
+.letter-from-emoji { font-size: 32px; }
+.letter-from-info {}
+.letter-from-label {
+  font-size: 11px; letter-spacing: 3px; color: var(--teal);
+  text-transform: uppercase; margin-bottom: 2px;
+}
+.letter-from-role {
+  font-size: 15px; color: var(--text-soft); font-weight: 300;
+}
+
+.letter-body {
+  position: relative; z-index: 1;
+  font-size: 15.5px; line-height: 2.1; color: #3a3020;
+  white-space: pre-wrap; word-break: break-word;
+  font-weight: 300;
+}
+
+.letter-sign {
+  position: relative; z-index: 1;
+  margin-top: 32px; text-align: right;
+  font-size: 13px; color: rgba(120,96,60,0.5);
+  letter-spacing: 2px;
+  font-style: italic;
+}
+
+/* 时间戳 */
+.letter-timestamp {
+  position: relative; z-index: 1;
+  margin-top: 12px; text-align: right;
+  font-size: 11px; color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+/* 底部操作 */
+.reply-actions {
+  display: flex; gap: 12px; margin-top: 20px;
+}
+.btn-action {
+  flex: 1; padding: 14px;
+  border-radius: var(--radius-md);
+  font-family: 'Noto Serif SC', serif;
+  font-size: 14px; letter-spacing: 2px;
+  cursor: pointer; transition: all 0.25s;
+  border: 1.5px solid;
+}
+.btn-action.primary {
+  background: var(--ink); color: white;
+  border-color: var(--ink);
+  box-shadow: 0 4px 16px rgba(26,26,46,0.2);
+}
+.btn-action.primary:hover {
+  background: var(--ink-soft);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(26,26,46,0.25);
+}
+.btn-action.secondary {
+  background: transparent; color: var(--text-soft);
+  border-color: var(--sand);
+}
+.btn-action.secondary:hover {
+  border-color: var(--teal); color: var(--teal);
+  background: var(--teal-glow);
+}
+
+/* ═══════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════ */
+.toast {
+  position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+  background: rgba(44,44,62,0.92); color: white;
+  padding: 12px 24px; border-radius: 30px;
+  font-size: 14px; letter-spacing: 1px;
+  z-index: 300; display: none;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  animation: toastSlide 0.3s ease;
+}
+.toast.show { display: block; }
+@keyframes toastSlide {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
+.footer {
+  margin-top: 60px; text-align: center;
+  font-size: 12px; color: var(--text-dim); letter-spacing: 2px;
+  font-weight: 300;
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .hero { padding: 52px 0 36px; }
+  .guide-cards { grid-template-columns: 1fr; gap: 8px; }
+  .panel-inner { padding: 28px 20px; }
+  .letter-card { padding: 36px 24px 32px; }
+  .letter-card::before { left: 24px; right: 24px; }
+  .letter-card::after { left: 44px; }
+  .reply-actions { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<!-- 背景装饰 -->
+<div class="bg-circles">
+  <span></span><span></span><span></span>
+</div>
+
+<!-- 加载遮罩 -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-bottle">🍾</div>
+  <div class="loading-ripple"><span></span><span></span><span></span></div>
+  <div class="loading-text">正在捞取远方的回应...</div>
+</div>
+
+<main class="app">
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <p class="hero-eyebrow">匿名 · 安全 · 纯 AI 回复</p>
+    <h1 class="hero-title">倾诉</h1>
+    <p class="hero-subtitle">
+      你 <span class="age-highlight" id="ageDisplay">—</span> 岁 · 匿名 · 安全
+    </p>
+
+    <div class="guide-cards">
+      <div class="guide-card">
+        <span class="icon">🔒</span>
+        <span class="text">完全匿名，不需要注册</span>
+      </div>
+      <div class="guide-card">
+        <span class="icon">🎯</span>
+        <span class="text">你选择想听谁的想法</span>
+      </div>
+      <div class="guide-card">
+        <span class="icon">💬</span>
+        <span class="text">AI 模拟不同年龄的人回复你</span>
+      </div>
+      <div class="guide-card">
+        <span class="icon">🌱</span>
+        <span class="text">没有评判，只有理解</span>
+      </div>
+    </div>
+
+    <button class="btn-start" id="btnStart" onclick="openPanel()">
+      ✍️ 说出今天的烦恼
+    </button>
+  </section>
+
+  <!-- ── 输入面板 ── -->
+  <div class="input-panel" id="inputPanel">
+    <div class="panel-inner">
+
+      <!-- 年龄 -->
+      <div class="age-section">
+        <div class="field-label">你的年龄</div>
+        <div class="age-input-row">
+          <span>我今年</span>
+          <input type="number" id="ageInput" min="6" max="99" placeholder="18"
+                 oninput="onAgeInput(this.value)">
+          <span>岁</span>
+        </div>
+      </div>
+
+      <!-- 烦恼 -->
+      <div class="trouble-section">
+        <div class="field-label">今天的烦恼</div>
+        <textarea id="troubleInput" maxlength="500"
+          placeholder="把今天压在心里的事说出来吧……不用整理逻辑，想到什么写什么，这里没有评判。"
+          oninput="onTextInput(this)"></textarea>
+        <div class="char-count" id="charCount">0 / 500</div>
+      </div>
+
+      <!-- 视角选择 -->
+      <div class="role-section">
+        <div class="field-label">你想听谁的想法？</div>
+        <div class="role-grid">
+
+          <div class="role-item" id="role-child" onclick="selectRole('child', this)">
+            <input type="radio" name="role" value="child">
+            <div class="role-dot"></div>
+            <div class="role-info">
+              <div class="role-name">小孩视角</div>
+              <div class="role-age">8 - 12 岁</div>
+            </div>
+            <div class="role-emoji-right">🧒</div>
+          </div>
+
+          <div class="role-item selected" id="role-teen" onclick="selectRole('teen', this)">
+            <input type="radio" name="role" value="teen" checked>
+            <div class="role-dot"></div>
+            <div class="role-info">
+              <div class="role-name">同龄人</div>
+              <div class="role-age">14 - 16 岁</div>
+            </div>
+            <div class="role-emoji-right">🧑‍🎓</div>
+          </div>
+
+          <div class="role-item" id="role-youngadult" onclick="selectRole('youngadult', this)">
+            <input type="radio" name="role" value="youngadult">
+            <div class="role-dot"></div>
+            <div class="role-info">
+              <div class="role-name">大几岁的朋友</div>
+              <div class="role-age">19 - 23 岁</div>
+            </div>
+            <div class="role-emoji-right">🧑‍💻</div>
+          </div>
+
+          <div class="role-item" id="role-experienced" onclick="selectRole('experienced', this)">
+            <input type="radio" name="role" value="experienced">
+            <div class="role-dot"></div>
+            <div class="role-info">
+              <div class="role-name">有经验的人</div>
+              <div class="role-age">26 - 31 岁</div>
+            </div>
+            <div class="role-emoji-right">👨‍💼</div>
+          </div>
+
+          <div class="role-item" id="role-elder" onclick="selectRole('elder', this)">
+            <input type="radio" name="role" value="elder">
+            <div class="role-dot"></div>
+            <div class="role-info">
+              <div class="role-name">长辈视角</div>
+              <div class="role-age">36 岁以上</div>
+            </div>
+            <div class="role-emoji-right">🧓</div>
+          </div>
+
+        </div>
+      </div>
+
+      <button class="btn-send" id="btnSend" onclick="sendBottle()">
+        🚀 发出去
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ── 回复信纸 ── -->
+  <div class="reply-section" id="replySection">
+    <div class="letter-card">
+      <div class="letter-header">
+        <div class="letter-from-emoji" id="replyEmoji">🧑‍🎓</div>
+        <div class="letter-from-info">
+          <div class="letter-from-label">来自远方的回信</div>
+          <div class="letter-from-role" id="replyRole">同龄人 · 14-16岁</div>
+        </div>
+      </div>
+      <div class="letter-body" id="replyBody"></div>
+      <div class="letter-sign" id="replySign">— 与你同行的远方旅人</div>
+      <div class="letter-timestamp" id="replyTime"></div>
+    </div>
+
+    <div class="reply-actions">
+      <button class="btn-action primary" onclick="resetAll()">🌊 再投一个</button>
+      <button class="btn-action secondary" onclick="askAgain()">🔄 换个视角</button>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>💙 所有回复由 AI 生成 · 完全匿名 · 不保存任何数据</p>
+  </footer>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── 状态 ──────────────────────────────────────────────────────
+let currentRole = 'teen';
+let lastAge = null;
+let lastTrouble = null;
+
+const ROLE_META = {
+  child:       { emoji: '🧒',   label: '小孩视角 · 8-12岁',      sign: '— 某个还相信魔法的小孩子' },
+  teen:        { emoji: '🧑‍🎓',  label: '同龄人 · 14-16岁',       sign: '— 和你一起熬过去的同学' },
+  youngadult:  { emoji: '🧑‍💻',  label: '大几岁的朋友 · 19-23岁', sign: '— 刚走过来的那个人' },
+  experienced: { emoji: '👨‍💼',  label: '有经验的人 · 26-31岁',   sign: '— 见过一些世面的朋友' },
+  elder:       { emoji: '🧓',   label: '长辈视角 · 36岁以上',     sign: '— 远方关心你的长辈' },
+};
+
+// ── 打开输入面板 ────────────────────────────────────────────────
+function openPanel() {
+  const panel = document.getElementById('inputPanel');
+  const btn   = document.getElementById('btnStart');
+  panel.classList.add('open');
+  btn.style.display = 'none';
+  setTimeout(() => {
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}
+
+// ── 年龄同步到副标题 ────────────────────────────────────────────
+function onAgeInput(val) {
+  const display = document.getElementById('ageDisplay');
+  display.textContent = val && val >= 6 && val <= 99 ? val : '—';
+}
+
+// ── 字数统计 ────────────────────────────────────────────────────
+function onTextInput(el) {
+  const len = el.value.length;
+  const counter = document.getElementById('charCount');
+  counter.textContent = len + ' / 500';
+  counter.classList.toggle('warn', len > 400);
+}
+
+// ── 视角选择 ────────────────────────────────────────────────────
+function selectRole(role, el) {
+  currentRole = role;
+  document.querySelectorAll('.role-item').forEach(r => r.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ── 发送漂流瓶 ──────────────────────────────────────────────────
+async function sendBottle() {
+  const ageVal  = document.getElementById('ageInput').value;
+  const trouble = document.getElementById('troubleInput').value.trim();
+  const age     = parseInt(ageVal);
+
+  if (!ageVal || isNaN(age) || age < 6 || age > 99) {
+    showToast('请先填写你的年龄（6-99岁）');
+    return;
+  }
+  if (!trouble || trouble.length < 5) {
+    showToast('多说一点点，哪怕几个字也好～');
+    return;
+  }
+
+  lastAge = age;
+  lastTrouble = trouble;
+
+  document.getElementById('loadingOverlay').classList.add('active');
+  document.getElementById('btnSend').disabled = true;
+
+  try {
+    // ── 请求后端 /api/reply（API Key 安全地在服务器端）──
+    const res = await fetch('/api/reply', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userAge: age, trouble, selectedRole: currentRole })
+    });
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.error || 'HTTP ' + res.status);
+    }
+
+    const data = await res.json();
+    showReply(data.reply);
+
+  } catch (err) {
+    showToast('漂流瓶迷路了，请稍后重试 🌊');
+    console.error(err);
+  } finally {
+    document.getElementById('loadingOverlay').classList.remove('active');
+    document.getElementById('btnSend').disabled = false;
+  }
+}
+
+// ── 展示回复 ────────────────────────────────────────────────────
+function showReply(text) {
+  const meta = ROLE_META[currentRole];
+  const now  = new Date();
+  const timeStr = now.getFullYear() + '.' +
+    String(now.getMonth()+1).padStart(2,'0') + '.' +
+    String(now.getDate()).padStart(2,'0') + '  ' +
+    String(now.getHours()).padStart(2,'0') + ':' +
+    String(now.getMinutes()).padStart(2,'0');
+
+  document.getElementById('replyEmoji').textContent = meta.emoji;
+  document.getElementById('replyRole').textContent  = meta.label;
+  document.getElementById('replyBody').textContent  = text;
+  document.getElementById('replySign').textContent  = meta.sign;
+  document.getElementById('replyTime').textContent  = timeStr;
+
+  // 隐藏输入面板，展示回复
+  document.getElementById('inputPanel').classList.remove('open');
+  const rs = document.getElementById('replySection');
+  rs.classList.add('show');
+  setTimeout(() => rs.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+}
+
+// ── 再投一个（完全重置）────────────────────────────────────────
+function resetAll() {
+  document.getElementById('replySection').classList.remove('show');
+  document.getElementById('troubleInput').value = '';
+  document.getElementById('ageInput').value = '';
+  document.getElementById('ageDisplay').textContent = '—';
+  document.getElementById('charCount').textContent = '0 / 500';
+  document.getElementById('btnStart').style.display = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── 换个视角（保留烦恼，只换角色重发）────────────────────────
+async function askAgain() {
+  if (!lastAge || !lastTrouble) { resetAll(); return; }
+
+  document.getElementById('replySection').classList.remove('show');
+  document.getElementById('inputPanel').classList.add('open');
+  setTimeout(() => {
+    document.getElementById('inputPanel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}
+
+// ── Toast ────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
